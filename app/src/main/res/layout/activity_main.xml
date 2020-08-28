@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/joinChatRoom"
+        android:id="@+id/searchChatRoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="搜索视频聊天室"
@@ -24,7 +24,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/joinChatRoom"
+        app:layout_constraintTop_toBottomOf="@id/searchChatRoom"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
