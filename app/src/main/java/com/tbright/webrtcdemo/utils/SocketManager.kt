@@ -7,6 +7,7 @@ import com.corundumstudio.socketio.Configuration
 import com.corundumstudio.socketio.SocketIOServer
 import com.corundumstudio.socketio.listener.DataListener
 import com.tbright.webrtcdemo.constant.PORT
+import com.tbright.webrtcdemo.webrtc.Signalling
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlin.concurrent.thread
@@ -19,38 +20,37 @@ import kotlin.concurrent.thread
  * @see com.corundumstudio.socketio:netty-socketio:1.7.12：socket服务端
  *
  */
-class SocketManager {
+object SocketManager {
     private var serverSocket: SocketIOServer? = null
     private var clientSocket: Socket? = null
     fun startServerSocket() {
-        thread {
-            try {
-                val config = Configuration()
-                //设置主机名
-                config.hostname = NetworkUtils.getIpAddressByWifi()
-                //设置监听端口
-                config.port = PORT
-                serverSocket = SocketIOServer(config)
+        try {
+            val config = Configuration()
+            //设置主机名
+            config.hostname = NetworkUtils.getIpAddressByWifi()
+            //设置监听端口
+            config.port = PORT
+            serverSocket = SocketIOServer(config)
 
-                //有socket连上
-                serverSocket?.addConnectListener { client ->
-                    log("connectListener sessionId:  ${client.getSessionId()}")
-                }
-
-                //有socket断开
-                serverSocket?.addDisconnectListener { client ->
-                    log("disconnectListener sessionId:  ${client.getSessionId()}")
-                }
-                serverSocket?.addEventListener("init",String::class.java){ client, data, ackSender ->
-                    log("init")
-                }
-
-                serverSocket?.start()
-                log("服务已开启：hostname-${config.hostname}")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                log("服务已开启失败")
+            //有socket连上
+            serverSocket?.addConnectListener { client ->
+                log("connectListener sessionId:  ${client.getSessionId()}")
+                client.sendEvent(Signalling.offer)
             }
+
+            //有socket断开
+            serverSocket?.addDisconnectListener { client ->
+                log("disconnectListener sessionId:  ${client.getSessionId()}")
+            }
+            serverSocket?.addEventListener("init", String::class.java) { client, data, ackSender ->
+                log("init")
+            }
+
+            serverSocket?.start()
+            log("服务已开启：host: ${config.hostname}--port: $PORT")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            log("服务已开启失败")
         }
     }
 
@@ -58,17 +58,17 @@ class SocketManager {
         try {
             val option = IO.Options()
             option.path = "/socket.io"
-            clientSocket = IO.socket(ip,option)
-            clientSocket?.on("connection"){args->
+            clientSocket = IO.socket(ip, option)
+            clientSocket?.on("connection") { args ->
                 log(args.get(0) as String)
             }
-            clientSocket?.on("disconnect"){args->
+            clientSocket?.on("disconnect") { args ->
                 log(args.get(0) as String)
             }
 
             clientSocket?.connect()
             clientSocket?.emit("init")
-            if(clientSocket?.connected() == true){
+            if (clientSocket?.connected() == true) {
                 ToastUtils.showShort("init")
             }
         } catch (e: Exception) {

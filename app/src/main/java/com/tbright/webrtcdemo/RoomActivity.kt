@@ -22,6 +22,6 @@ class RoomActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
-        SocketManager().startServerSocket()
+        SocketManager.startServerSocket()
     }
 }

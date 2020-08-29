@@ -12,11 +12,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         createChatRoom.setOnClickListener {
-            RoomActivity.start(this@MainActivity,"")
+//            RoomActivity.start(this@MainActivity,"")
+            SocketManager.startServerSocket()
         }
         searchChatRoom.setOnClickListener {
 //            SearchLanDevicesUtils().search()
-            SocketManager().startClientSocket("http://192.168.16.238:5555/")
+            SocketManager.startClientSocket("http://192.168.16.237:5555/")
         }
     }
 }
