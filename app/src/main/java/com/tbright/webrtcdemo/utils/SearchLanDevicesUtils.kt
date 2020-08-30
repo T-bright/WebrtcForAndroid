@@ -5,10 +5,7 @@ import android.util.Log
 import com.blankj.utilcode.util.NetworkUtils
 import com.tbright.webrtcdemo.constant.PORT
 import com.tbright.webrtcdemo.constant.TIME_OUT
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.concurrent.Executors
@@ -22,21 +19,22 @@ class SearchLanDevicesUtils {
     /**
      * 搜索局域网内的设备
      */
-    fun search() {
+    fun search(l:(ip:String)->Unit) {
         val locAddress: String? = getLocAddress() ?: return
         for (index in 0..255) {
             val hostName = locAddress + index
             if (ipAddress == hostName) continue
-            if(index != 238){
-                continue
-            }
             executorService.execute {
                 val socket = Socket()
                 try {
                     val socketAddress = InetSocketAddress(hostName, PORT)
                     socket.connect(socketAddress, TIME_OUT)
                     socket.close()
+                    l.invoke(hostName)
+                    log("${hostName} 链接成功")
                 } catch (e: IOException) {
+                    e.printStackTrace()
+                    log("${hostName} 链接失败")
                 } finally {
                     try {
                         socket.close()
@@ -58,5 +56,7 @@ class SearchLanDevicesUtils {
         }
         return locAddress
     }
-
+    private fun log(message: String) {
+        Log.d("SearchLanDevicesUtils", message)
+    }
 }
