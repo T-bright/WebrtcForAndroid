@@ -6,6 +6,7 @@ import com.blankj.utilcode.util.NetworkUtils
 import com.tbright.webrtcdemo.constant.PORT
 import com.tbright.webrtcdemo.constant.TIME_OUT
 import java.io.IOException
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.concurrent.Executors
@@ -33,7 +34,7 @@ class SearchLanDevicesUtils {
                     l.invoke(hostName)
                     log("${hostName} 链接成功")
                 } catch (e: IOException) {
-                    e.printStackTrace()
+//                    e.printStackTrace()
                     log("${hostName} 链接失败")
                 } finally {
                     try {
@@ -54,6 +55,7 @@ class SearchLanDevicesUtils {
         if (TextUtils.isEmpty(locAddress)) {
             return null
         }
+        log("local ip address ${ipAddress}")
         return locAddress
     }
     private fun log(message: String) {
